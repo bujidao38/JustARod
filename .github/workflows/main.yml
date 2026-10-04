@@ -21,8 +21,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Fix absolute paths in gradle-wrapper.properties
+        run: |
+          sed -i 's|/media/crystalnek0/enkoo/java/toNeko/.gradle-home|/home/runner/.gradle|g' gradle/wrapper/gradle-wrapper.properties
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: true
 
       - name: Build with Gradle
         run: ./gradlew :neoforge:build --no-daemon
