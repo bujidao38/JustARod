@@ -27,7 +27,7 @@ jobs:
           mkdir -p /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/
           mv gradle-9.5.1-bin.zip /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/
 
-      - name: Create correct gradle-wrapper.properties
+      - name: Fix gradle-wrapper.properties
         run: |
           mkdir -p gradle/wrapper
           cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
@@ -38,6 +38,26 @@ jobs:
           validateDistributionUrl=true
           zipStoreBase=GRADLE_USER_HOME
           zipStorePath=wrapper/dists
+          EOF
+
+      - name: Fix settings.gradle repositories
+        run: |
+          cat > settings.gradle << 'EOF'
+          pluginManagement {
+              repositories {
+                  maven { url = uri("https://maven.aliyun.com/repository/public") }
+                  maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+                  maven { url = uri("https://maven.aliyun.com/repository/google") }
+                  maven { url = uri("https://maven.fabricmc.net/") }
+                  maven { url = uri("https://maven.architectury.dev/") }
+                  maven { url = uri("https://files.minecraftforge.net/maven/") }
+                  gradlePluginPortal()
+              }
+          }
+          rootProject.name = 'justarod'
+          include 'common'
+          include 'fabric'
+          include 'neoforge'
           EOF
 
       - name: Build with Gradle
